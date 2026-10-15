@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Planer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
+<style>
+:root{--bg:#F4F6FB;--card:#fff;--ink:#14213D;--mute:#5B6785;--line:#E3E7F0;--pri:#3D5AFE;--priSoft:#E3E8FF;--on:#fff;--err:#C62828;--free:#0E7C61;--seg:#8FDCC3;--ok:#12A579;color-scheme:light}
+.c0{--eb:#E3E8FF;--ef:#1B2A8F}.c1{--eb:#D9F5EC;--ef:#0B6B53}.c2{--eb:#FFF0D1;--ef:#8A5A00}.c3{--eb:#FFE3EC;--ef:#9B1F4A}
+:root[data-theme=dark]{--bg:#0E1424;--card:#171F36;--ink:#EEF1FA;--mute:#9AA5C4;--line:#262F4A;--pri:#7C93FF;--priSoft:#252F5C;--on:#0E1424;--err:#FF8A80;--free:#5FE0B7;--seg:#1F6B57;--ok:#43D6A6;color-scheme:dark}
+[data-theme=dark] .c0{--eb:#252F5C;--ef:#C5D0FF}[data-theme=dark] .c1{--eb:#12372F;--ef:#9CE8CF}[data-theme=dark] .c2{--eb:#3D3014;--ef:#FFD98A}[data-theme=dark] .c3{--eb:#43202D;--ef:#FFB3C9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+#app{max-width:430px;margin:0 auto;min-height:100dvh;padding:calc(env(safe-area-inset-top,0px) + 36px) 0 160px}
+.hd{padding:0 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sub{font-size:14px;font-weight:600;color:var(--mute)}
+h1{margin:4px 0 0;font-size:30px;font-weight:800;line-height:1.15}
+.ib{width:44px;height:44px;border-radius:50%;background:var(--card);display:grid;place-items:center}
+.btn{min-height:48px;padding:0 20px;border-radius:14px;font-weight:700;background:var(--pri);color:var(--on)}
+.btn.alt{background:var(--card);color:var(--ink)}
+.btn.dg{background:none;color:var(--err)}
+.strip{display:flex;gap:6px;padding:20px 24px 0}
+.dd{flex:1;min-height:64px;border-radius:16px;background:var(--card);color:var(--mute);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:600}
+.dd b{font-size:16px;color:var(--ink)}
+.dd.td{box-shadow:inset 0 0 0 2px var(--pri)}
+.dd.on{background:var(--pri);color:var(--on)}
+.dd.on b{color:var(--on)}
+.list{padding:28px 24px 0;display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:12px}
+.tm{width:44px;padding-top:16px;font-size:13px;font-weight:700;color:var(--mute)}
+.ev{flex:1;text-align:left;border-radius:20px;padding:16px;background:var(--eb);color:var(--ef);display:flex;flex-direction:column;gap:4px;min-height:64px}
+.ev b{font-size:17px;font-weight:800}
+.ev span{font-size:13px}
+.empty{padding:28px 24px 0;margin:0;color:var(--mute);font-size:15px;line-height:1.5}
+.cal{margin:20px 16px 0;padding:12px 8px;background:var(--card);border-radius:24px}
+.g{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;row-gap:2px}
+.wd{font-size:12px;font-weight:700;color:var(--mute);padding-bottom:6px}
+.c{width:44px;height:44px;margin:0 auto;border-radius:50%;position:relative;font-size:15px;font-weight:600}
+.k::after{content:"";position:absolute;left:50%;bottom:5px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--pri)}
+.t{background:var(--priSoft);color:var(--pri)}
+.s{background:var(--ink);color:var(--bg)}
+.s::after{background:var(--bg)}
+nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;display:flex;padding:8px 12px calc(12px + env(safe-area-inset-bottom,0px));background:var(--card);box-shadow:0 -1px 0 var(--line)}
+.tb{flex:1;min-height:56px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--mute)}
+.tb[aria-current=page]{color:var(--pri)}
+.fab{position:absolute;right:24px;bottom:calc(100% + 20px);width:56px;height:56px;border-radius:50%;background:var(--pri);color:var(--on);display:grid;place-items:center;box-shadow:0 8px 20px rgba(61,90,254,.35)}
+#ov{position:fixed;inset:0;background:rgba(10,15,30,.5);display:none;align-items:flex-end;justify-content:center;z-index:10}
+#ov.open{display:flex}
+.sh{width:100%;max-width:430px;max-height:92dvh;overflow:auto;background:var(--card);border-radius:28px 28px 0 0;padding:24px 24px calc(24px + env(safe-area-inset-bottom,0px))}
+.sh h2{margin:0 0 16px;font-size:22px;font-weight:800}
+.f{display:block;font-size:13px;font-weight:700;color:var(--mute);margin-bottom:12px}
+.in{display:block;width:100%;min-height:48px;margin-top:6px;padding:0 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);font-size:16px;color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sws{display:flex;gap:12px;margin-top:6px}
+.sw{position:relative;width:44px;height:44px}
+.sw input{position:absolute;inset:0;opacity:0;margin:0}
+.sw span{display:block;width:44px;height:44px;border-radius:50%;background:var(--eb);box-shadow:inset 0 0 0 2px transparent}
+.sw input:checked+span{box-shadow:inset 0 0 0 3px var(--ef)}
+.sw input:focus-visible+span{outline:2px solid var(--pri);outline-offset:2px}
+.rep{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--ink);font-weight:600;margin:16px 0 8px}
+.rep input{width:22px;height:22px}
+.err{color:var(--err);font-size:13px;min-height:18px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tf{display:flex;gap:8px;padding:20px 24px 0}
+.tf .in{margin:0;flex:1}
+.tk{display:flex;align-items:center;gap:4px;background:var(--card);border-radius:16px;padding:4px 4px 4px 8px;min-height:56px}
+.ck{width:44px;height:44px;display:grid;place-items:center}
+.ck i{width:24px;height:24px;border-radius:8px;border:2px solid var(--mute);display:grid;place-items:center;font-style:normal;font-size:14px;color:var(--on)}
+.done .ck i{background:var(--pri);border-color:var(--pri)}
+.done .tx{text-decoration:line-through;color:var(--mute)}
+.tx{flex:1;font-size:16px;font-weight:600}
+.btn[disabled]{opacity:.55;cursor:default}
+.sum{margin:20px 24px 0;padding:16px;border-radius:20px;background:var(--card)}
+.sum .st{font-size:13px;font-weight:600;color:var(--mute)}
+.sum b{display:block;margin-top:2px;font-size:22px;font-weight:800}
+.bar{display:flex;gap:2px;height:14px;border-radius:7px;overflow:hidden;margin-top:12px}
+.bar i{display:block;min-width:2px}
+.bl{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:600;color:var(--mute)}
+.grp{padding:20px 24px 0}
+.fr{flex:1;text-align:left;border-radius:20px;padding:12px 16px;border:2px dashed var(--free);color:var(--free);display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:56px}
+.fr b{display:block;font-size:15px;font-weight:800}
+.fr span{font-size:13px}
+.fr em{font-style:normal;font-size:13px;font-weight:800;white-space:nowrap}
+.ev.tc{flex-direction:row;align-items:center;gap:4px;padding:4px 12px 4px 8px}
+.tt{flex:1;min-width:0;text-align:left;display:flex;flex-direction:column;gap:2px;min-height:44px;justify-content:center;color:inherit}
+.tt b{font-size:16px;font-weight:800}
+.tt span{font-size:13px}
+.ev.tc .ck i{border-color:var(--ef);color:var(--eb)}
+.ev.tc.done{opacity:.65}
+.ev.tc.done b{text-decoration:line-through}
+.ev.tc.done .ck i{background:var(--ef)}
+.tk .tt span{color:var(--mute)}
+.tk.done .tt b{text-decoration:line-through;color:var(--mute)}
+.seg{display:flex;gap:6px;margin-bottom:12px}
+.seg label{flex:1;position:relative}
+.seg input{position:absolute;inset:0;opacity:0;margin:0}
+.seg span{display:grid;place-items:center;min-height:44px;border-radius:12px;background:var(--bg);font-weight:700;font-size:14px}
+.seg input:checked+span{background:var(--pri);color:var(--on)}
+.seg input:focus-visible+span{outline:2px solid var(--pri);outline-offset:2px}
+form[data-k=task] .eo,form[data-k=event] .to{display:none}
+.set{margin:12px 24px 0;padding:16px;border-radius:20px;background:var(--card)}
+.set h2{margin:0 0 10px;font-size:15px;font-weight:800}
+.set p{margin:8px 0 0;font-size:13px;color:var(--mute);line-height:1.5}
+#toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);width:calc(100% - 32px);max-width:398px;padding:14px 16px;border-radius:16px;background:var(--ink);color:var(--bg);font-weight:700;font-size:14px;z-index:20;display:none}
+#toast.on{display:block}
+.sum .tk{background:none;border-radius:0;padding:0;border-top:1px solid var(--line)}
+.sum .tt b{display:inline;margin:0;font-size:16px}
+.sum .tf{padding:12px 0 0}
+.sum .tk:first-of-type{margin-top:12px}
+.cl{margin:16px 24px 0;padding:8px 16px 12px;background:var(--card);border-radius:24px}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+.ch b{font-size:18px;font-weight:800}
+.pill{font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;background:var(--bg);color:var(--mute)}
+.pill.ok{background:var(--ok);color:var(--on)}
+.cl .tk{background:none;border-radius:0;padding:0;border-top:1px solid var(--line)}
+.cl .ch+.tk{border-top:0}
+.cl .tf{padding:12px 0 0}
+.cl .bar{margin:4px 0}
+.emp{display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 32px 0}
+.emp b{margin-top:12px;font-size:18px;font-weight:800}
+.emp p{margin:4px 0 0;font-size:14px;color:var(--mute);line-height:1.5}
+.hd svg{flex:none}
+.ck i{width:26px;height:26px;border-radius:50%;transition:background .15s,border-color .15s}
+.done .ck i{background:var(--ok);border-color:var(--ok);color:var(--on)}
+.ev.tc.done{--eb:#D9F5EC;--ef:#0B6B53;opacity:.85}
+[data-theme=dark] .ev.tc.done{--eb:#12372F;--ef:#9CE8CF}
+.ev.tc.done .ck i{background:var(--ef);border-color:var(--ef);color:var(--eb)}
+@media(prefers-reduced-motion:no-preference){.sh{animation:up .2s ease-out}@keyframes up{from{transform:translateY(40px);opacity:.6}}}
+</style>
+</head>
+<body>
+<div id="app"><main id="main"></main></div>
+<nav aria-label="Glavna navigacija">
+  <button class="tb" data-act="tab" data-t="day"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>Danas</button>
+  <button class="tb" data-act="tab" data-t="cal"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Kalendar</button>
+  <button class="tb" data-act="tab" data-t="tasks"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Zadaci</button>
+  <button class="tb" data-act="tab" data-t="me"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="4"/><path d="M5 20c1-4 13-4 14 0"/></svg>Profil</button>
+  <button class="fab" data-act="add" aria-label="Dodaj događaj"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+</nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="ov"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const DN = ['nedelja','ponedeljak','utorak','sreda','četvrtak','petak','subota'];
+const MG = ['januar','februar','mart','april','maj','jun','jul','avgust','septembar','oktobar','novembar','decembar'];
+const REM = [[-1,'Bez podsetnika'],[0,'Na početku'],[10,'10 min ranije'],[30,'30 min ranije'],[60,'1 sat ranije'],[120,'2 sata ranije'],[180,'3 sata ranije'],[1440,'1 dan ranije'],[2880,'2 dana ranije']];
+const REP = [['none','Ne ponavlja se'],['daily','Svaki dan'],['weekly','Svake nedelje'],['monthly','Svakog meseca']];
+const DEF = { theme: 'auto', from: '07:00', to: '23:00' };
+const pad = n => String(n).padStart(2, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parse = s => { const [a, b, c] = s.split('-').map(Number); return new Date(a, b - 1, c); };
+const cap = s => s[0].toUpperCase() + s.slice(1);
+const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const ic = p => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const toMin = t => +t.slice(0, 2) * 60 + +t.slice(3);
+const hm = m => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+const fmtDur = m => { const h = Math.floor(m / 60), r = m % 60; return (h ? h + ' h' : '') + (h && r ? ' ' : '') + (r ? r + ' min' : ''); };
+const dayLabel = d => `${cap(DN[d.getDay()])}, ${d.getDate()}. ${MG[d.getMonth()]}`;
+const rm = x => x.rem == null ? -1 : x.rem;
+const addMin = (t, m) => hm(Math.min(1439, toMin(t) + m));
+
+/* ---------- podaci ---------- */
+function nextDow(w) { const d = new Date(); while (d.getDay() !== w) d.setDate(d.getDate() + 1); return iso(d); }
+function seed() {
+  const f = (w, a, b, id) => ({ id, title: 'Fakultet', date: nextDow(w), start: a, end: b, color: 0, repeat: 'weekly', until: '', rem: -1, skip: [] });
+  return { events: [f(2, '14:00', '20:00', 'a'), f(4, '08:00', '14:00', 'b'), f(5, '14:00', '18:00', 'c')], tasks: [], settings: { ...DEF } };
+}
+function load() {
+  try { const r = JSON.parse(localStorage.getItem('planer')); if (r && r.events && r.tasks) { r.settings = { ...DEF, ...r.settings }; return r; } } catch (e) {}
+  return seed();
+}
+function save() { try { localStorage.setItem('planer', JSON.stringify(S)); } catch (e) {} }
+let S = load();
+
+/* ---------- tema ---------- */
+const mq = matchMedia('(prefers-color-scheme:dark)');
+function applyTheme() { const t = S.settings.theme; document.documentElement.dataset.theme = t === 'auto' ? (mq.matches ? 'dark' : 'light') : t; }
+mq.addEventListener('change', applyTheme);
+applyTheme();
+
+/* ---------- stanje prikaza ---------- */
+let tab = 'day', sel = iso(new Date()), view = { y: new Date().getFullYear(), m: new Date().getMonth() };
+function setSel(s) { sel = s; const d = parse(s); view = { y: d.getFullYear(), m: d.getMonth() }; }
+
+/* ---------- raspored jednog dana ---------- */
+function occurs(e, s) {
+  if ((e.skip || []).includes(s) || s < e.date || (e.until && s > e.until)) return false;
+  const r = e.repeat || 'none';
+  if (r === 'none') return s === e.date;
+  if (r === 'daily') return true;
+  const a = parse(e.date), b = parse(s);
+  return r === 'weekly' ? a.getDay() === b.getDay() : a.getDate() === b.getDate();
+}
+function dayItems(s) {
+  const out = [];
+  S.events.forEach(e => { if (occurs(e, s)) out.push({ k: 'e', id: e.id, title: e.title, start: e.start, end: e.end, color: e.color, rep: e.repeat, rem: rm(e) }); });
+  S.tasks.forEach(t => {
+    if (t.date !== s) return;
+    const st = t.time || '';
+    out.push({ k: 't', id: t.id, title: t.text, start: st, end: st ? addMin(st, t.dur || 30) : '', color: t.color == null ? 2 : t.color, done: t.done, rem: t.done ? -1 : rm(t) });
+  });
+  return out;
+}
+function freeInfo(s, its) {
+  const W0 = toMin(S.settings.from), W1 = toMin(S.settings.to), now = new Date();
+  const lo = s === iso(now) ? Math.max(W0, Math.ceil((now.getHours() * 60 + now.getMinutes()) / 15) * 15) : W0;
+  const R = { lo, W1, segs: [], free: [], tot: 0 };
+  if (lo >= W1) return R;
+  const iv = its.filter(i => i.start).map(i => [Math.max(lo, toMin(i.start)), Math.min(W1, toMin(i.end))]).filter(v => v[1] > v[0]).sort((a, b) => a[0] - b[0]);
+  const m = [];
+  iv.forEach(v => { const l = m[m.length - 1]; if (l && v[0] <= l[1]) l[1] = Math.max(l[1], v[1]); else m.push([...v]); });
+  let c = lo;
+  m.forEach(v => { if (v[0] > c) { R.segs.push([c, v[0], 0]); R.free.push([c, v[0]]); } R.segs.push([v[0], v[1], 1]); c = v[1]; });
+  if (c < W1) { R.segs.push([c, W1, 0]); R.free.push([c, W1]); }
+  R.free = R.free.filter(g => g[1] - g[0] >= 15);
+  R.tot = R.free.reduce((a, g) => a + g[1] - g[0], 0);
+  return R;
+}
+
+function itemRow(i, s) {
+  const tmCol = i.start ? `<div class="tm">${i.start}</div>` : '';
+  if (i.k === 't') return `<div class="row">${tmCol}<div class="ev tc c${i.color}${i.done ? ' done' : ''}"><button class="ck" role="checkbox" aria-checked="${!!i.done}" aria-label="Završeno: ${esc(i.title)}" data-act="tg" data-id="${i.id}"><i>${i.done ? '✓' : ''}</i></button><button class="tt" data-act="edit" data-id="${i.id}"><b>${esc(i.title)}</b><span>Zadatak${i.start ? ` · ${i.start} – ${i.end}` : ''}</span></button></div></div>`;
+  const rp = i.rep && i.rep !== 'none' ? ' · ' + REP.find(r => r[0] === i.rep)[1].toLowerCase() : '';
+  return `<div class="row">${tmCol}<button class="ev c${i.color}" data-act="edit" data-id="${i.id}" data-d="${s}"><b>${esc(i.title)}</b><span>${i.start} – ${i.end} · ${fmtDur(toMin(i.end) - toMin(i.start))}${rp}</span></button></div>`;
+}
+function freeRow(g, s) {
+  return `<div class="row"><div class="tm">${hm(g[0])}</div><button class="fr" data-act="fill" data-d="${s}" data-s="${hm(g[0])}" data-e="${hm(g[1])}"><div><b>Slobodno</b><span>${hm(g[0])} – ${hm(g[1])} · ${fmtDur(g[1] - g[0])}</span></div><em>+ Popuni</em></button></div>`;
+}
+function agenda(s) {
+  const its = dayItems(s), F = freeInfo(s, its), L = F.W1 - F.lo;
+  const un = its.filter(i => !i.start), tm = its.filter(i => i.start);
+  let h = `<div class="sum"><div class="st">Slobodno vreme</div><b>${F.tot ? fmtDur(F.tot) : L > 0 ? 'Sve je popunjeno' : 'Dan je gotov'}</b>`;
+  if (L > 0) h += `<div class="bar" role="img" aria-label="Zauzeto i slobodno vreme tokom dana">${F.segs.map(g => `<i style="flex:${g[1] - g[0]};background:${g[2] ? 'var(--pri)' : 'var(--seg)'}"></i>`).join('')}</div><div class="bl"><span>${hm(F.lo)}</span><span>${hm(F.W1)}</span></div>`;
+  h += '</div>';
+  if (un.length) h += `<div class="sub grp">Tokom dana</div><div class="list" style="padding-top:8px">${un.map(i => itemRow(i, s)).join('')}</div>`;
+  const rows = [...tm.map(i => ({ t: i.start, h: itemRow(i, s) })), ...F.free.map(g => ({ t: hm(g[0]), h: freeRow(g, s) }))].sort((a, b) => a.t.localeCompare(b.t));
+  if (rows.length) h += `<div class="list">${rows.map(r => r.h).join('')}</div>`;
+  else if (!un.length) h += '<p class="empty">Dan je prazan. Dodaj nešto dugmetom +.</p>';
+  return h;
+}
+
+/* ---------- prikazi ---------- */
+function vDay() {
+  const d = parse(sel), t = iso(new Date()), mon = new Date(d);
+  mon.setDate(d.getDate() - (d.getDay() + 6) % 7);
+  let st = '';
+  for (let i = 0; i < 7; i++) {
+    const x = new Date(mon); x.setDate(mon.getDate() + i);
+    const s = iso(x);
+    st += `<button class="dd${s === sel ? ' on' : ''}${s === t ? ' td' : ''}" data-act="sel" data-d="${s}" aria-label="${dayLabel(x)}"${s === sel ? ' aria-pressed="true"' : ''}><span>${'PUSČPSN'[i]}</span><b>${x.getDate()}</b></button>`;
+  }
+  return `<header class="hd"><div><div class="sub">${dayLabel(d)}</div><h1>${sel === t ? 'Tvoj dan' : 'Izabrani dan'}</h1>${sel === t ? '' : '<button class="btn alt" style="min-height:36px;margin-top:8px;padding:0 14px" data-act="today">Nazad na danas</button>'}</div>
+  <div style="display:flex;gap:4px"><button class="ib" data-act="wk" data-n="-7" aria-label="Prethodna nedelja">${ic('<path d="M15 6l-6 6 6 6"/>')}</button><button class="ib" data-act="wk" data-n="7" aria-label="Sledeća nedelja">${ic('<path d="M9 6l6 6-6 6"/>')}</button></div></header>
+  <div class="strip">${st}</div>${agenda(sel)}`;
+}
+
+function vCal() {
+  const { y, m } = view, lead = (new Date(y, m, 1).getDay() + 6) % 7, n = new Date(y, m + 1, 0).getDate(), t = iso(new Date());
+  let c = '<span></span>'.repeat(lead);
+  for (let i = 1; i <= n; i++) {
+    const s = `${y}-${pad(m + 1)}-${pad(i)}`;
+    c += `<button class="c${dayItems(s).length ? ' k' : ''}${s === t ? ' t' : ''}${s === sel ? ' s' : ''}" data-act="sel" data-d="${s}" aria-label="${i}. ${MG[m]}">${i}</button>`;
+  }
+  return `<header class="hd"><h1>${cap(MG[m])} ${y}</h1>
+  <div style="display:flex;gap:4px"><button class="ib" data-act="mo" data-n="-1" aria-label="Prethodni mesec">${ic('<path d="M15 6l-6 6 6 6"/>')}</button><button class="ib" data-act="mo" data-n="1" aria-label="Sledeći mesec">${ic('<path d="M9 6l6 6-6 6"/>')}</button></div></header>
+  <div class="cal"><div class="g wd">${'PUSČPSN'.split('').map(x => `<span>${x}</span>`).join('')}</div><div class="g">${c}</div></div>
+  <div class="sub" style="padding:24px 24px 0">${dayLabel(parse(sel))}</div>${agenda(sel)}${checklist(sel)}`;
+}
+
+const clIcon = w => `<svg width="${w}" height="${w}" viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="4" width="44" height="56" rx="10" fill="var(--pri)"/>${[16, 27, 38, 49].map(y => `<path d="M17 ${y}l3 3 6-6M31 ${y}h16" fill="none" stroke="var(--on)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}</svg>`;
+const chkRow = (x, meta) => `<div class="tk${x.done ? ' done' : ''}"><button class="ck" role="checkbox" aria-checked="${!!x.done}" aria-label="Završeno: ${esc(x.text)}" data-act="tg" data-id="${x.id}"><i>${x.done ? '✓' : ''}</i></button><button class="tt" data-act="edit" data-id="${x.id}"><b>${esc(x.text)}</b>${meta ? `<span>${meta}</span>` : ''}</button><button class="ib" style="background:none" aria-label="Obriši zadatak" data-act="td" data-id="${x.id}">${ic('<path d="M6 6l12 12M18 6L6 18"/>')}</button></div>`;
+const byTime = (a, b) => (a.done - b.done) || (a.time || '99').localeCompare(b.time || '99');
+const pill = L => { const n = L.filter(x => x.done).length; return `<span class="pill${L.length && n === L.length ? ' ok' : ''}">${n}/${L.length}</span>`; };
+function addForm(s) { return `<form class="tf tf2" data-d="${s}"><input class="in" name="t" placeholder="Dodaj zadatak" aria-label="Dodaj zadatak" maxlength="120" required><button class="btn">Dodaj</button></form>`; }
+function checklist(s) {
+  const L = S.tasks.filter(t => t.date === s).sort(byTime);
+  return `<div class="cl"><div class="ch"><b>Zadaci</b>${L.length ? pill(L) : ''}</div>${L.length ? L.map(x => chkRow(x, x.time)).join('') : '<div class="sub" style="padding:2px 0 4px">Nema zadataka za ovaj dan</div>'}${addForm(s)}</div>`;
+}
+function vTasks() {
+  const t0 = iso(new Date()), tm = new Date(); tm.setDate(tm.getDate() + 1);
+  const dates = [...new Set(S.tasks.map(x => x.date || ''))].sort((a, b) => (a || '9').localeCompare(b || '9'));
+  const groups = dates.map(d => ({ d, L: S.tasks.filter(x => (x.date || '') === d).sort(byTime) })).filter(g => !(g.d && g.d < t0 && g.L.every(x => x.done)));
+  const lab = d => !d ? 'Bez datuma' : d === t0 ? 'Danas' : d === iso(tm) ? 'Sutra' : dayLabel(parse(d));
+  const all = S.tasks.length, dn = S.tasks.filter(x => x.done).length;
+  return `<header class="hd"><div><div class="sub">${all - dn} preostalo</div><h1>Zadaci</h1></div>${clIcon(56)}</header>
+  <form class="tf" id="tf"><input class="in" name="t" placeholder="Nova obaveza za danas" aria-label="Nova obaveza za danas" maxlength="120" required><button class="btn">Dodaj</button></form>
+  ${all ? `<div class="cl"><div class="ch"><b>Ukupno</b>${pill(S.tasks)}</div><div class="bar" role="img" aria-label="${dn} od ${all} završeno"><i style="flex:${dn};background:var(--ok)"></i><i style="flex:${all - dn};background:var(--line)"></i></div></div>` : ''}
+  ${groups.length ? groups.map(g => `<div class="cl"><div class="ch"><b>${lab(g.d)}</b>${pill(g.L)}</div>${g.L.map(x => chkRow(x, x.time)).join('')}</div>`).join('') : all ? '<p class="empty">Sve je završeno.</p>' : `<div class="emp">${clIcon(120)}<b>Lista je prazna</b><p>Upiši prvu obavezu iznad. Zadatak sa datumom ulazi u raspored tog dana.</p></div>`}`;
+}
+
+function vMe() {
+  const st = S.settings, can = !!window.Notification, perm = can ? Notification.permission : '';
+  return `<header class="hd"><div><div class="sub">Podaci su samo na ovom uređaju</div><h1>Profil</h1></div></header>
+  <div class="set"><h2>Tema</h2><div class="seg" role="radiogroup" aria-label="Tema">${[['auto', 'Auto'], ['light', 'Svetla'], ['dark', 'Tamna']].map(([v, n]) => `<label><input type="radio" name="theme" value="${v}" data-set="theme"${st.theme === v ? ' checked' : ''}><span>${n}</span></label>`).join('')}</div></div>
+  <div class="set"><h2>Radni dan</h2><div class="two"><label class="f">Počinje<input class="in" type="time" data-set="from" value="${st.from}"></label><label class="f">Završava<input class="in" type="time" data-set="to" value="${st.to}"></label></div><p>U ovom opsegu računam slobodno vreme.</p></div>
+  <div class="set"><h2>Obaveštenja</h2><button class="btn alt" data-act="perm"${!can || perm === 'granted' ? ' disabled' : ''}>${!can ? 'Nije podržano u ovom pregledaču' : perm === 'granted' ? 'Obaveštenja su uključena' : 'Uključi obaveštenja'}</button><p>Podsetnici stižu dok je aplikacija otvorena. Za podsetnike kad je telefon zaključan koristi kalendar telefona.</p></div>
+  <div class="set"><h2>Podaci</h2><div class="acts"><button class="btn alt" data-act="exp">Izvezi JSON</button><button class="btn dg" data-act="wipe">Obriši sve</button></div></div>`;
+}
+
+function render() {
+  $('#main').innerHTML = ({ day: vDay, cal: vCal, tasks: vTasks, me: vMe })[tab]();
+  document.querySelectorAll('.tb').forEach(b => b.dataset.t === tab ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+}
+
+/* ---------- forma: događaj ili zadatak ---------- */
+function openSheet(id, d, pre) {
+  const tk = id && S.tasks.find(x => x.id === id), ev = id && !tk && S.events.find(x => x.id === id), p = pre || {};
+  const v = tk ? { title: tk.text, date: tk.date || sel, start: tk.time || '', dur: tk.dur || 30, color: tk.color == null ? 2 : tk.color, rem: rm(tk), rep: 'none', until: '' }
+    : ev ? { title: ev.title, date: ev.date, start: ev.start, end: ev.end, dur: 30, color: ev.color, rep: ev.repeat || 'none', until: ev.until || '', rem: rm(ev) }
+    : { title: '', date: d || sel, start: p.start || '09:00', end: p.end || '10:00', dur: 30, color: 0, rep: 'none', until: '', rem: -1 };
+  const recur = ev && v.rep !== 'none';
+  $('#ov').innerHTML = `<form class="sh" id="ef" role="dialog" aria-modal="true" aria-labelledby="sht" data-id="${id || ''}" data-k="${tk ? 'task' : 'event'}">
+  <h2 id="sht">${tk ? 'Izmeni zadatak' : ev ? 'Izmeni događaj' : 'Dodaj u raspored'}</h2>
+  ${id ? '' : '<div class="seg" role="radiogroup" aria-label="Vrsta"><label><input type="radio" name="kind" value="event" checked><span>Događaj</span></label><label><input type="radio" name="kind" value="task"><span>Zadatak</span></label></div>'}
+  <label class="f">Naziv<input class="in" name="title" required maxlength="80" value="${esc(v.title)}" placeholder="npr. Fakultet"></label>
+  <label class="f">Datum${recur ? ' početka niza' : ''}<input class="in" type="date" name="date" required value="${v.date}"></label>
+  <div class="two"><label class="f"><span class="eo">Od</span><span class="to">Vreme (nije obavezno)</span><input class="in" type="time" name="start" value="${v.start}"></label>
+  <label class="f eo">Do<input class="in" type="time" name="end" value="${v.end || '10:00'}"></label>
+  <label class="f to">Trajanje<select class="in" name="dur">${[15, 30, 45, 60, 90, 120, 180].map(m => `<option value="${m}"${v.dur === m ? ' selected' : ''}>${fmtDur(m)}</option>`).join('')}</select></label></div>
+  <div class="f" role="group" aria-label="Boja">Boja<div class="sws">${[0, 1, 2, 3].map(i => `<label class="sw c${i}"><input type="radio" name="color" value="${i}" aria-label="${['Plava', 'Zelena', 'Žuta', 'Roze'][i]}"${v.color === i ? ' checked' : ''}><span></span></label>`).join('')}</div></div>
+  <label class="f eo">Ponavljanje<select class="in" name="rep">${REP.map(r => `<option value="${r[0]}"${v.rep === r[0] ? ' selected' : ''}>${r[1]}</option>`).join('')}</select></label>
+  <label class="f eo">Ponavlja se do (nije obavezno)<input class="in" type="date" name="until" value="${v.until}"></label>
+  <label class="f">Podsetnik<select class="in" name="rem">${REM.map(r => `<option value="${r[0]}"${v.rem === r[0] ? ' selected' : ''}>${r[1]}</option>`).join('')}</select></label>
+  ${recur ? '<p class="sub" style="margin:0 0 8px">Izmene važe za ceo niz.</p>' : ''}
+  <div class="err" id="err" role="alert"></div>
+  <div class="acts"><button class="btn">Sačuvaj</button><button type="button" class="btn alt" data-act="close">Otkaži</button>
+  
+  ${recur ? `<button type="button" class="btn dg" data-act="delone" data-id="${id}" data-d="${d || sel}">Obriši samo ovaj dan</button><button type="button" class="btn dg" data-act="del" data-id="${id}">Obriši ceo niz</button>` : ''}
+  ${ev && !recur ? `<button type="button" class="btn dg" data-act="del" data-id="${id}">Obriši</button>` : ''}
+  ${tk ? `<button type="button" class="btn dg" data-act="td" data-id="${id}">Obriši</button>` : ''}</div></form>`;
+  $('#ov').classList.add('open');
+  $('#ef [name=title]').focus();
+}
+let pending = null;
+function ask(msg, yes) {
+  pending = yes;
+  $('#ov').innerHTML = `<div class="sh" role="alertdialog" aria-modal="true" aria-labelledby="cq"><h2 id="cq">${msg}</h2><div class="acts"><button class="btn" style="background:var(--err)" data-act="yes">Da, obriši</button><button class="btn alt" data-act="close">Otkaži</button></div></div>`;
+  $('#ov').classList.add('open');
+}
+function closeSheet() { $('#ov').classList.remove('open'); $('#ov').innerHTML = ''; }
+
+/* ---------- izvoz u kalendar (.ics) ---------- */
+function normE(e) { return { id: e.id, title: e.title, date: e.date, start: e.start, end: e.end, repeat: e.repeat, until: e.until, skip: e.skip, rem: rm(e) }; }
+function normT(t) { return { id: t.id, title: t.text, date: t.date, start: t.time || '', end: t.time ? addMin(t.time, t.dur || 30) : '', repeat: 'none', rem: rm(t) }; }
+function icsText(list) {
+  const z = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const c = t => t.replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n');
+  const T = (s, t) => s.replace(/-/g, '') + 'T' + t.replace(':', '') + '00';
+  const L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Planer//SR', 'CALSCALE:GREGORIAN'];
+  list.forEach(x => {
+    L.push('BEGIN:VEVENT', `UID:${x.id}@planer`, `DTSTAMP:${z}`, `SUMMARY:${c(x.title)}`);
+    if (x.start) L.push(`DTSTART:${T(x.date, x.start)}`, `DTEND:${T(x.date, x.end)}`); else L.push(`DTSTART;VALUE=DATE:${x.date.replace(/-/g, '')}`);
+    if (x.repeat && x.repeat !== 'none') {
+      L.push('RRULE:FREQ=' + x.repeat.toUpperCase() + (x.until ? ';UNTIL=' + x.until.replace(/-/g, '') + 'T235959' : ''));
+      (x.skip || []).forEach(d => L.push(`EXDATE:${T(d, x.start)}`));
+    }
+    if (x.rem >= 0 && x.start) L.push('BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${c(x.title)}`, `TRIGGER:-PT${x.rem}M`, 'END:VALARM');
+    L.push('END:VEVENT');
+  });
+  L.push('END:VCALENDAR');
+  return L.join('\r\n');
+}
+async function dl(name, text) {
+  try {
+    const d = window.claude && await claude.use('downloads');
+    if (!d) { toast('Preuzimanje nije dostupno u ovom prikazu.', 3000); return; }
+    await d.save({ filename: name, data: text });
+  } catch (e) {}
+}
+
+/* ---------- podsetnici ---------- */
+let tt;
+function toast(m, ms = 10000) { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), ms); }
+function askPerm() { try { if (window.Notification && Notification.permission === 'default') Notification.requestPermission(); } catch (e) {} }
+function tick() {
+  let F = {}; try { F = JSON.parse(localStorage.getItem('planer_f') || '{}'); } catch (e) {}
+  const now = new Date(), today = iso(now);
+  for (let k = 0; k < 3; k++) {
+    const d = new Date(now); d.setDate(d.getDate() + k);
+    const s = iso(d);
+    dayItems(s).forEach(i => {
+      if (i.rem < 0) return;
+      const st = new Date(`${s}T${i.start || '09:00'}:00`), tr = new Date(st.getTime() - i.rem * 60000), key = `${s}|${i.id}|${i.rem}`;
+      if (now >= tr && now <= st && !F[key]) {
+        F[key] = 1;
+        const m = `${i.title} · ${i.start ? 'počinje u ' + i.start : 'danas'}`;
+        toast('Podsetnik: ' + m);
+        try { if (window.Notification && Notification.permission === 'granted') new Notification('Podsetnik', { body: m }); } catch (e) {}
+        try { navigator.vibrate && navigator.vibrate(200); } catch (e) {}
+      }
+    });
+  }
+  Object.keys(F).forEach(k => { if (k.slice(0, 10) < today) delete F[k]; });
+  try { localStorage.setItem('planer_f', JSON.stringify(F)); } catch (e) {}
+}
+
+/* ---------- događaji ---------- */
+document.addEventListener('click', ev => {
+  if (ev.target.id === 'ov') { closeSheet(); return; }
+  const b = ev.target.closest('[data-act]');
+  if (!b) return;
+  const a = b.dataset.act, D = b.dataset;
+  if (a === 'tab') { tab = D.t; window.scrollTo(0, 0); }
+  else if (a === 'sel') setSel(D.d);
+  else if (a === 'wk') { const d = parse(sel); d.setDate(d.getDate() + +D.n); setSel(iso(d)); }
+  else if (a === 'mo') { const d = new Date(view.y, view.m + +D.n, 1); view = { y: d.getFullYear(), m: d.getMonth() }; }
+  else if (a === 'today') setSel(iso(new Date()));
+  else if (a === 'add') { openSheet(null, sel); return; }
+  else if (a === 'fill') { openSheet(null, D.d, { start: D.s, end: hm(Math.min(toMin(D.e), toMin(D.s) + 60)) }); return; }
+  else if (a === 'edit') { openSheet(D.id, D.d); return; }
+  else if (a === 'close') { closeSheet(); return; }
+  else if (a === 'del') {
+    const e = S.events.find(x => x.id === D.id);
+    ask(e.repeat && e.repeat !== 'none' ? 'Obrisati ceo niz događaja?' : 'Obrisati događaj?', () => { S.events = S.events.filter(x => x.id !== D.id); save(); toast('Događaj obrisan', 2500); });
+    return;
+  }
+  else if (a === 'yes') { const f = pending; pending = null; closeSheet(); if (f) f(); }
+  else if (a === 'delone') { const e = S.events.find(x => x.id === D.id); e.skip = [...(e.skip || []), D.d]; save(); closeSheet(); toast('Obrisan samo taj dan', 2500); }
+  else if (a === 'tg') { const t = S.tasks.find(x => x.id === D.id); t.done = !t.done; save(); }
+  else if (a === 'td') { S.tasks = S.tasks.filter(x => x.id !== D.id); save(); closeSheet(); toast('Zadatak obrisan', 2500); }
+  else if (a === 'perm') { if (window.Notification) Notification.requestPermission().then(render); return; }
+  else if (a === 'ics') { dl('planer.ics', icsText([...S.events.map(normE), ...S.tasks.filter(t => t.date && !t.done).map(normT)]), 'text/calendar'); toast('Fajl je preuzet. Otvori ga da ga ubaciš u kalendar.', 4000); return; }
+  else if (a === 'ics1') { dl('dogadjaj.ics', icsText([normE(S.events.find(x => x.id === D.id))]), 'text/calendar'); toast('Fajl je preuzet. Otvori ga da ga ubaciš u kalendar.', 4000); return; }
+  else if (a === 'exp') { dl('planer.json', JSON.stringify(S, null, 2), 'application/json'); return; }
+  else if (a === 'wipe') { ask('Obrisati sve događaje i zadatke?', () => { S = { events: [], tasks: [], settings: S.settings }; save(); }); return; }
+  render();
+});
+
+document.addEventListener('change', ev => {
+  const t = ev.target;
+  if (t.dataset.set) { S.settings[t.dataset.set] = t.value; if (t.dataset.set === 'theme') applyTheme(); save(); }
+  if (t.name === 'kind' && t.form) t.form.dataset.k = t.value;
+});
+
+document.addEventListener('submit', ev => {
+  ev.preventDefault();
+  const f = ev.target;
+  if (f.id === 'ef') {
+    const v = Object.fromEntries(new FormData(f)), k = f.dataset.k, id = f.dataset.id, bad = m => { $('#err').textContent = m; };
+    const base = { date: v.date, color: +(v.color || 0), rem: +v.rem };
+    if (k === 'event') {
+      if (!v.start) return bad('Unesi vreme početka.');
+      if (!v.end || v.end <= v.start) return bad('Kraj mora biti posle početka.');
+      if (v.until && v.until < v.date) return bad('Ponavljanje mora trajati do datuma posle početka.');
+      const o = { ...base, title: v.title.trim(), start: v.start, end: v.end, repeat: v.rep, until: v.until || '' };
+      if (id) Object.assign(S.events.find(x => x.id === id), o); else S.events.push({ id: uid(), skip: [], ...o });
+    } else {
+      const o = { ...base, text: v.title.trim(), time: v.start || '', dur: +v.dur || 30 };
+      if (id) Object.assign(S.tasks.find(x => x.id === id), o); else S.tasks.push({ id: uid(), done: false, ...o });
+    }
+    if (base.rem >= 0) askPerm();
+    setSel(v.date); save(); closeSheet(); render(); toast(id ? 'Sačuvano' : k === 'event' ? 'Događaj dodat u kalendar' : 'Zadatak dodat', 2500); tick();
+  } else if (f.classList.contains('tf2')) {
+    const t = f.t.value.trim();
+    if (t) { S.tasks.unshift({ id: uid(), text: t, date: f.dataset.d, time: '', dur: 30, color: 2, rem: -1, done: false }); save(); render(); toast('Zadatak dodat', 2500); const n = document.querySelector('.tf2 input'); if (n) n.focus(); }
+  } else if (f.id === 'tf') {
+    const t = f.t.value.trim();
+    if (t) { S.tasks.unshift({ id: uid(), text: t, date: iso(new Date()), time: '', dur: 30, color: 2, rem: -1, done: false }); save(); render(); toast('Zadatak dodat u današnji raspored', 2500); const n = $('#tf input'); if (n) n.focus(); }
+  }
+});
+
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape') closeSheet(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { tick(); if (!$('#ov').classList.contains('open') && (tab === 'day' || tab === 'cal')) render(); } });
+$('#toast').addEventListener('click', () => $('#toast').classList.remove('on'));
+setInterval(() => { tick(); if (!$('#ov').classList.contains('open') && (tab === 'day' || tab === 'cal')) render(); }, 60000);
+
+render();
+tick();
+</script>
+</body>
+</html>
